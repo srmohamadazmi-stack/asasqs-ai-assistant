@@ -1,0 +1,7 @@
+{
+  "name": "ASAS-QS AI Assistant",
+  "description": "An AI assistant for the ASAS-QS website, powered by the Gemini API, providing users with a conversational interface for support and inquiries.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
