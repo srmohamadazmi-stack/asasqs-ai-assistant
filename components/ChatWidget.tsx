@@ -107,8 +107,24 @@ const ChatWidget: React.FC = () => {
 
   useEffect(() => {
     const initChat = () => {
+      // --- START OF CHANGE ---
+      // IMPORTANT: Paste your Gemini API key below between the quotes.
+      // This method is required for your project setup.
+      // For security, monitor your API usage and consider making your GitHub repository private.
+      const apiKey = "AIzaSyAKoRcPa3nTzGfXilykxlIS8_IAGlJnS6w";
+      // --- END OF CHANGE ---
+
+      if (!apiKey || apiKey === "PASTE_YOUR_SECRET_GEMINI_API_KEY_HERE") {
+        console.error("Gemini API key is not defined. Please add it to components/ChatWidget.tsx.");
+        const hasError = messages.some(m => m.content.startsWith('Configuration error:'));
+        if (!hasError) {
+          setMessages((prev) => [...prev, { role: 'error', content: 'Configuration error: The AI assistant is not set up correctly. The API key is missing.' }]);
+        }
+        return; // Stop initialization
+      }
+
       try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+        const ai = new GoogleGenAI({ apiKey });
 
         const history = messages
           .filter(msg => msg.role === 'user' || msg.role === 'model')
@@ -127,7 +143,7 @@ const ChatWidget: React.FC = () => {
         });
       } catch (error) {
         console.error("Failed to initialize Gemini chat:", error);
-        setMessages((prev) => [...prev, { role: 'error', content: 'Failed to initialize the chat assistant. Please check the API key and configuration.' }]);
+        setMessages((prev) => [...prev, { role: 'error', content: 'Failed to initialize the chat assistant. Please check your configuration.' }]);
       }
     };
     initChat();
@@ -158,6 +174,8 @@ const ChatWidget: React.FC = () => {
     } else {
       console.warn('Speech Recognition not supported by this browser.');
     }
+  // We only want this to run once, but also to react if messages change on first load from session storage.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToBottom = () => {
